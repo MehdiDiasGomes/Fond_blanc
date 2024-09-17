@@ -10,7 +10,7 @@ def adjust_image(image_path, output_path):
     lab_image = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
 
     # Définir une zone de référence pour le "point blanc" en bas à gauche de l'image
-    height, width = lab_image.shape[:2]
+    height = lab_image.shape[:2]
     white_ref_region = lab_image[height-10:height, 0:10]  # Zone de 10 pixels de hauteur en bas à gauche
 
     # Calculer la valeur moyenne de la luminosité dans cette région
