@@ -7,6 +7,7 @@ def adjust_image(image_path, output_path, white_point_coords):
     
     lab_image = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
 
+    # Obtenir la valeur du point blanc
     white_ref_point = lab_image[white_point_coords[1], white_point_coords[0]]
 
     mean_luminance = white_ref_point[0]
@@ -40,21 +41,29 @@ def is_image_suitable(image_path, white_area_threshold=0.8, min_contour_area=500
 
     return white_area_ratio > white_area_threshold and total_contour_area > min_contour_area
 
-source_folder = '/Users/mehdi/Desktop/Dev/Fond_blanc/Images'
-destination_folder = '/Users/mehdi/Desktop/Dev/Fond_blanc/Images_Traites'
-excluded_folder = '/Users/mehdi/Desktop/Dev/Fond_blanc/Images_Humains'
+source_folder = '/Users/mehdi/Desktop/Dev/jewely-auto-white-bg/src/assets/Images'
+destination_folder = '/Users/mehdi/Desktop/Dev/jewely-auto-white-bg/src/assets/Images_Traites'
+excluded_folder = '/Users/mehdi/Desktop/Dev/jewely-auto-white-bg/src/assets/Images_Humains'
 
 os.makedirs(destination_folder, exist_ok=True)
 os.makedirs(excluded_folder, exist_ok=True)
 
-white_point_coords = (50, 50)  
-
+# Traitement des images
 for filename in os.listdir(source_folder):
     if filename.lower().endswith(('.png', '.jpg', '.jpeg', '.webp')):
         file_path = os.path.join(source_folder, filename)
         output_path = os.path.join(destination_folder, filename)
         excluded_path = os.path.join(excluded_folder, filename)
         try:
+            # Charger l'image pour obtenir ses dimensions
+            image = cv2.imread(file_path)
+            if image is None:
+                continue
+            
+            # Calculer les coordonnées du point blanc (coin inférieur gauche)
+            height, width = image.shape[:2]
+            white_point_coords = (0, height - 1)  # Coin inférieur gauche
+            
             if is_image_suitable(file_path):
                 adjust_image(file_path, output_path, white_point_coords)
                 print(f"Traitement de {filename} terminé.")
